@@ -92,3 +92,80 @@ WHERE "Job Title" IS NULL OR "Job Title" = '';
 SELECT *
 FROM contacts_raw
 WHERE "Job Title" IS NULL OR "Job Title" = '';
+
+-- ── DEALS ─────────────────────────────────────────────────
+SELECT * FROM deals_raw;
+-- Total row count
+SELECT COUNT(*) AS total_records
+FROM deals_raw;
+
+-- Deal stage variants (DISTINCT)
+SELECT DISTINCT "Deal Stage" AS deal_stage
+FROM deals_raw;
+
+-- Deal type variants (DISTINCT)
+SELECT DISTINCT "Deal Type" AS deal_type
+FROM deals_raw;
+
+-- Deal type variants (DISTINCT) - Pipeline vs Deal Type column
+SELECT DISTINCT "Pipeline" AS deal_type
+FROM deals_raw;
+
+-- Amount formatting issues (nulls + non-numeric values)
+SELECT COUNT(*) AS amount_formatting_issues
+FROM deals_raw
+WHERE "Amount" IS NULL OR NOT REGEXP_REPLACE("Amount", '[^0-9.]', '') ~ '^[0-9]+\.?[0-9]*$';
+
+-- Deals with Amount = Null or empty
+SELECT *
+FROM deals_raw
+WHERE "Amount" IS NULL OR Amount = '';
+
+-- Count of Null close dates
+SELECT COUNT(*) AS missing_close_date
+FROM deals_raw
+WHERE "Close Date" IS NULL OR "Close Date" = '';
+
+-- Deals with Null close dates
+SELECT * FROM deals_raw
+WHERE "Close Date" IS NULL OR "Close Date" = '';
+
+-- Orphaned deals (no associated contact email)
+SELECT * FROM deals_raw
+WHERE "Associated Contact Email" IS NULL OR "Associated Contact Email" = '';
+
+-- Duplicate deal names
+SELECT * FROM deals_raw
+WHERE "Deal Name" IN (
+    SELECT "Deal Name"
+    FROM deals_raw
+    GROUP BY "Deal Name"
+    HAVING COUNT(*) > 1
+)
+ORDER BY "Deal Name" ASC;
+
+-- Duplicate deal names with duplicate close dates
+SELECT * FROM deals_raw
+WHERE "Deal Name" IN (
+    SELECT "Deal Name"
+    FROM deals_raw
+    GROUP BY "Deal Name"
+    HAVING COUNT(*) > 1
+)
+AND "Close Date" IN (
+    SELECT "Close Date"
+    FROM deals_raw
+    GROUP BY "Close Date"
+    HAVING COUNT(*) > 1
+)
+ORDER BY "Deal Name" ASC;
+
+-- Lead source variants across contacts and deals (DISTINCT)
+SELECT DISTINCT "Lead Source"
+FROM (
+    SELECT "Lead Source" FROM contacts_raw
+    UNION
+    SELECT "Lead Source" FROM deals_raw
+)
+WHERE "Lead Source" IS NOT NULL
+ORDER BY "Lead Source";
