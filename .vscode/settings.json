@@ -1,0 +1,11 @@
+{
+  "duckdb.databases": [
+    {
+      "alias": "pipelineiq",
+      "type": "file",
+      "path": "/Users/alfredomerino/Documents/pipelineiq/pipelineiq.db",
+      "attached": true
+    }
+  ],
+  "duckdb.defaultDatabase": "pipelineiq"
+}
