@@ -1,0 +1,26 @@
+<svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PipelineIQ logo">
+  <title>PipelineIQ</title>
+
+  <!-- Icon mark -->
+  <rect width="64" height="64" x="0" y="8" rx="14" fill="#BA7517"/>
+
+  <!-- Bar chart bars -->
+  <rect x="12" y="44" width="10" height="16" rx="2.5" fill="white" opacity="0.45"/>
+  <rect x="27" y="34" width="10" height="26" rx="2.5" fill="white" opacity="0.65"/>
+  <rect x="42" y="22" width="10" height="38" rx="2.5" fill="white"/>
+
+  <!-- Trend line -->
+  <polyline points="17,40 32,30 47,18" stroke="white" stroke-width="1.8" stroke-dasharray="3.5 2.5" stroke-linecap="round" fill="none" opacity="0.55"/>
+
+  <!-- Dots on trend line -->
+  <circle cx="17" cy="40" r="3.5" fill="white"/>
+  <circle cx="32" cy="30" r="3.5" fill="white"/>
+  <circle cx="47" cy="18" r="3.5" fill="white"/>
+
+  <!-- Wordmark -->
+  <text x="82" y="44" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="32" font-weight="700" fill="#0D1B2A" letter-spacing="-0.5">Pipeline</text>
+  <text x="222" y="44" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="32" font-weight="700" fill="#BA7517" letter-spacing="-0.5">IQ</text>
+
+  <!-- Tagline -->
+  <text x="83" y="62" font-family="'Inter', 'Segoe UI', sans-serif" font-size="11" font-weight="500" fill="#888780" letter-spacing="2">CRM · SQL · REVENUE INTELLIGENCE</text>
+</svg>
