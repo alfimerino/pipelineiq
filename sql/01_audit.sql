@@ -169,3 +169,71 @@ FROM (
 )
 WHERE "Lead Source" IS NOT NULL
 ORDER BY "Lead Source";
+
+-- ── AD CLICKS ─────────────────────────────────────────────
+SELECT * FROM ad_clicks_raw;
+-- Total row count
+SELECT COUNT(*) AS total_records
+FROM ad_clicks_raw;
+
+-- Platform variants (DISTINCT)
+SELECT DISTINCT "Platform" AS platform
+FROM ad_clicks_raw;
+
+-- Null cost_per_click count
+SELECT COUNT(*) AS null_cost_per_click
+FROM ad_clicks_raw
+WHERE "cost_per_click" IS NULL;
+
+-- Duplicate click_ids
+SELECT * FROM ad_clicks_raw
+WHERE "click_id" IN (
+    SELECT "click_id"
+    FROM ad_clicks_raw
+    GROUP BY "click_id"
+    HAVING COUNT(*) > 1
+)
+ORDER BY "click_id" ASC;
+
+-- Timestamp format variants
+SELECT DISTINCT
+    CASE
+        WHEN click_timestamp LIKE '%T%Z' THEN 'ISO 8601 (T + Z)'
+        WHEN click_timestamp LIKE '%T%'  THEN 'ISO 8601 (T only)'
+        WHEN click_timestamp LIKE '%/%'  THEN 'slashes'
+        WHEN click_timestamp LIKE '%-%'  THEN 'dashes'
+        ELSE 'other: ' || click_timestamp
+    END AS format_detected,
+    COUNT(*) AS cnt
+FROM ad_clicks_raw
+GROUP BY format_detected
+ORDER BY cnt DESC;
+
+-- ── AD CAMPAIGNS ──────────────────────────────────────────
+SELECT * FROM ad_campaigns_raw;
+-- Total row count
+SELECT COUNT(*) AS total_records
+FROM ad_campaigns_raw;
+
+-- Marketing objective variants (DISTINCT)
+SELECT DISTINCT "marketing_objective" AS marketing_objective
+FROM ad_campaigns_raw;
+
+-- Target audience variants (DISTINCT)
+SELECT DISTINCT "target_audience" AS target_audience
+FROM ad_campaigns_raw;
+
+-- Budget formatting issues
+SELECT * FROM ad_campaigns_raw
+WHERE allocated_budget IS NULL
+   OR allocated_budget = ''
+   OR NOT regexp_matches(
+        regexp_replace(allocated_budget, '[^0-9.]', '', 'g'),
+        '^[0-9]+\.?[0-9]*$'
+      );
+
+-- Campaigns with no clicks (JOIN to ad_clicks_raw)
+SELECT ac.*
+FROM ad_campaigns_raw ac
+LEFT JOIN ad_clicks_raw ad ON ac.campaign_id = ad.campaign_id
+WHERE ad.campaign_id IS NULL;
