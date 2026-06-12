@@ -18,7 +18,7 @@
   <circle cx="47" cy="18" r="3.5" fill="white"/>
 
   <!-- Wordmark -->
-  <text x="82" y="44" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="32" font-weight="700" fill="#0D1B2A" letter-spacing="-0.5">Pipeline</text>
+  <text x="82" y="44" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="32" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">Pipeline</text>
   <text x="222" y="44" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="32" font-weight="700" fill="#BA7517" letter-spacing="-0.5">IQ</text>
 
   <!-- Tagline -->
