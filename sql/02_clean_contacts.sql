@@ -8,21 +8,35 @@
 
 -- ── STEP 1: NORMALIZE EMAILS ──────────────────────────────
 -- Lowercase and trim all emails
-SELECT TRIM(LOWER(Email)) FROM contacts_raw;
+UPDATE contacts_clean SET Email = TRIM(LOWER(Email));
 
--- Flag invalid emails (no @ or typo domains)
-SELECT Email,
-    CASE
-        WHEN Email LIKE '%@gmail.co%' THEN 'Invalid: co'
-        WHEN Email LIKE '%@yaho.com%' THEN 'Invalid: yahoo'
-        ELSE 'Valid'
-END AS email_validity
-FROM contacts_raw;
+-- fix email domain typos
+UPDATE contacts_clean
+SET Email = REPLACE(Email, '@gmail.comm', '@gmail.com')
+WHERE Email LIKE '%@gmail.co';
 
 -- ── STEP 2: NORMALIZE PHONE NUMBERS ──────────────────────
--- Strip all non-numeric characters
--- Keep last 10 digits
+-- Strip all non-numeric characters and keep last 10 digits
+UPDATE contacts_clean
+SET Phone = SUBSTR(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+    Phone,
+    '-', ''),
+    ' ', ''),
+    '(', ''),
+    ')', ''),
+    '+', ''),
+    '.', ''),
+    ' ', ''), -10);
+
 -- Null out anything that can't be salvaged
+UPDATE contacts_clean
+SET Phone = CASE
+    WHEN Phone LIKE '1%' THEN NULL
+    WHEN Phone LIKE '0%' THEN NULL
+    WHEN LENGTH(Phone) < 10 THEN NULL
+    ELSE Phone
+END;
+
 -- ── STEP 3: NORMALIZE LEAD SOURCE ────────────────────────
 -- Standardize all variants to canonical values
 -- YouTube, Podcast, Paid Social, Events,
