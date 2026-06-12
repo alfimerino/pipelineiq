@@ -38,6 +38,9 @@ SET Phone = CASE
 END;
 
 -- ── STEP 3: NORMALIZE LEAD SOURCE ────────────────────────
+-- Standardize all variants to canonical values
+-- YouTube, Podcast, Paid Social, Events,
+-- Referral, Newsletter, Organic Search, Unknown
 UPDATE contacts_clean
 SET "Lead Source" = CASE
 WHEN "Lead Source" ILIKE '%youtube%' THEN 'YouTube'
@@ -51,10 +54,20 @@ WHEN "Lead Source" ILIKE '%youtube%' THEN 'YouTube'
 END;
 
 -- ── STEP 4: NORMALIZE LIFECYCLE STAGE ────────────────────
-SELECT DISTINCT "Lifecycle Stage" FROM contacts_clean;
 -- Standardize all variants to canonical values
 -- Lead, MQL, SQL, Opportunity, Customer,
 -- Subscriber, Unknown
+
+UPDATE contacts_clean
+SET "Lifecycle Stage" = CASE
+ WHEN "Lifecycle Stage" ILIKE '%lead%' THEN 'Lead'
+        WHEN "Lifecycle Stage" ILIKE '%mql%' THEN 'MQL'
+        WHEN "Lifecycle Stage" ILIKE '%sql%' THEN 'SQL'
+        WHEN "Lifecycle Stage" ILIKE '%opportunity%' THEN 'Opportunity'
+        WHEN "Lifecycle Stage" ILIKE '%customer%' THEN 'Customer'
+        WHEN "Lifecycle Stage" ILIKE '%subscriber%' THEN 'Subscriber'
+        ELSE 'Unknown'
+END;
 -- ── STEP 5: NORMALIZE COMPANY ────────────────────────────
 -- Trim whitespace
 -- Remove trailing LLC variants (optional)
