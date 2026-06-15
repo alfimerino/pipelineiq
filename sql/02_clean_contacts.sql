@@ -118,4 +118,22 @@ WHERE "First Name" IS NULL OR "First Name" = '' OR "Last Name" IS NULL OR "Last 
 -- ── STEP 7: DEDUPLICATE ───────────────────────────────────
 -- Identify duplicate emails (case-insensitive)
 -- Keep most recent record per email
--- Use ROW_NUMBER() OVER PARTITION BY
+
+-- Step 1: merge missing data into the older row
+UPDATE contacts_clean
+SET
+    "First Name" = COALESCE("First Name", (SELECT new."First Name" FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid)),
+    "Last Name" = COALESCE("Last Name", (SELECT new."Last Name" FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid)),
+    Company = (SELECT new.Company FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid),
+    Phone = COALESCE(Phone, (SELECT new.Phone FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid)),
+    "Lead Source" = COALESCE("Lead Source", (SELECT new."Lead Source" FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid)),
+    "Lifecycle Stage" = COALESCE("Lifecycle Stage", (SELECT new."Lifecycle Stage" FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid)),
+    City = COALESCE(City, (SELECT new.City FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid)),
+    "Job Title" = COALESCE("Job Title", (SELECT new."Job Title" FROM contacts_clean new WHERE new.Email = contacts_clean.Email AND new.rowid > contacts_clean.rowid))
+WHERE Email IN (SELECT Email FROM contacts_clean GROUP BY Email HAVING COUNT(*) > 1)
+AND rowid = (SELECT MIN(rowid) FROM contacts_clean old WHERE old.Email = contacts_clean.Email);
+
+-- Step 2: delete the newer duplicate
+DELETE FROM contacts_clean
+WHERE Email IN (SELECT Email FROM contacts_clean GROUP BY Email HAVING COUNT(*) > 1)
+AND rowid = (SELECT MAX(rowid) FROM contacts_clean old WHERE old.Email = contacts_clean.Email);
