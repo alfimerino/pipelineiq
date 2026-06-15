@@ -111,6 +111,10 @@ UPDATE contacts_clean SET City = NULL
 WHERE City IS NULL OR City = '';
 
 -- Flag records with missing first or last name
+ALTER TABLE contacts_clean ADD COLUMN missing_name BOOLEAN;
+UPDATE contacts_clean SET missing_name = TRUE
+WHERE "First Name" IS NULL OR "First Name" = '' OR "Last Name" IS NULL OR "Last Name" = '';
+
 -- ── STEP 7: DEDUPLICATE ───────────────────────────────────
 -- Identify duplicate emails (case-insensitive)
 -- Keep most recent record per email
