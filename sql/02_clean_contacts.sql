@@ -70,22 +70,48 @@ SET "Lifecycle Stage" = CASE
 END;
 -- ── STEP 5: NORMALIZE COMPANY ────────────────────────────
 -- Trim whitespace
+SELECT TRIM("Company"), Company FROM contacts_raw;
+
 -- Remove trailing LLC variants (optional)
+UPDATE contacts_clean
+SET Company = TRIM(REPLACE(REPLACE(REPLACE(REPLACE(Company,
+    ' LLC LLC LLC', ' LLC'),
+    ' LLC, LLC', ' LLC'),
+    ' LLC LLC', ' LLC'),
+    '  ', ' '))
+WHERE Company LIKE '% LLC%LLC%';
+
+-- Fix capitalization
+UPDATE contacts_clean
+SET Company = array_to_string(
+    list_transform(
+        string_split(Company, ' '),
+        word -> CASE
+            WHEN regexp_replace(word, ',$', '') = 'AND' THEN lower(word)
+            WHEN regexp_replace(word, ',$', '') IN ('LLC', 'PLC') THEN word
+            ELSE array_to_string(
+                list_transform(
+                    string_split(word, '-'),
+                    part -> upper(part[1:1]) || lower(part[2:])
+                ),
+                '-'
+            )
+        END
+    ),
+    ' '
+)
+WHERE Company IS NOT NULL;
+
 -- ── STEP 6: HANDLE NULLS ─────────────────────────────────
 -- Null out empty strings for city and job title
+UPDATE contacts_clean SET "Job Title" = NULL
+WHERE "Job Title" IS NULL OR "Job Title" = '';
+
+UPDATE contacts_clean SET City = NULL
+WHERE City IS NULL OR City = '';
+
 -- Flag records with missing first or last name
 -- ── STEP 7: DEDUPLICATE ───────────────────────────────────
 -- Identify duplicate emails (case-insensitive)
 -- Keep most recent record per email
 -- Use ROW_NUMBER() OVER PARTITION BY
--- ── STEP 8: CREATE CLEAN TABLE ───────────────────────────
--- CREATE TABLE contacts_clean AS
--- SELECT all normalized fields
--- Apply all transformations above
--- Exclude duplicates
--- ── STEP 9: VALIDATE ─────────────────────────────────────
--- Count before vs after
--- Confirm no nulls in email
--- Confirm no duplicate emails
--- Confirm all lifecycle stages are canonical
--- Confirm all lead sources are canonical
