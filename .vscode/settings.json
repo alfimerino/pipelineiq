@@ -7,5 +7,18 @@
       "attached": true
     }
   ],
-  "duckdb.defaultDatabase": "pipelineiq"
+  "duckdb.defaultDatabase": "pipelineiq",
+  "files.associations": {
+    "*.sql": "sql"
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "sql": true,
+    "sqlbook": true
+  },
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  }
 }

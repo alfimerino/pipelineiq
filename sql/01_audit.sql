@@ -3,8 +3,6 @@
 -- Purpose: Discover all data quality issues before cleaning
 -- Tables: contacts_raw, deals_raw, ad_clicks_raw, ad_campaigns_raw
 
-SELECT * FROM contacts_raw;
-
 -- ── CONTACTS ──────────────────────────────────────────────
 
 -- Total row count
@@ -94,7 +92,6 @@ FROM contacts_raw
 WHERE "Job Title" IS NULL OR "Job Title" = '';
 
 -- ── DEALS ─────────────────────────────────────────────────
-SELECT * FROM deals_raw;
 -- Total row count
 SELECT COUNT(*) AS total_records
 FROM deals_raw;
@@ -171,7 +168,6 @@ WHERE "Lead Source" IS NOT NULL
 ORDER BY "Lead Source";
 
 -- ── AD CLICKS ─────────────────────────────────────────────
-SELECT * FROM ad_clicks_raw;
 -- Total row count
 SELECT COUNT(*) AS total_records
 FROM ad_clicks_raw;
@@ -210,7 +206,6 @@ GROUP BY format_detected
 ORDER BY cnt DESC;
 
 -- ── AD CAMPAIGNS ──────────────────────────────────────────
-SELECT * FROM ad_campaigns_raw;
 -- Total row count
 SELECT COUNT(*) AS total_records
 FROM ad_campaigns_raw;

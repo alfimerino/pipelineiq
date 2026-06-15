@@ -8,6 +8,7 @@ ROOT = Path(__file__).parent
 DB_PATH = ROOT / "pipelineiq.duckdb"
 RAW_TABLES = {
     "contacts_raw":    ROOT / "data/raw/contacts_dirty.csv",
+    "contacts_clean":  ROOT / "data/exports/contacts_clean.csv",
     "deals_raw":       ROOT / "data/raw/deals_dirty.csv",
     "ad_clicks_raw":   ROOT / "data/raw/ad_clicks.csv",
     "ad_campaigns_raw":ROOT / "data/raw/ad_campaigns.csv",
