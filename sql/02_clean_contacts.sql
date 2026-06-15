@@ -6,6 +6,10 @@
 -- Output:  contacts_clean
 -- ============================================================
 
+-- Make a copy of contacts_raw to work with called contacts_clean
+CREATE TABLE contacts_clean AS
+SELECT * FROM contacts_raw;
+
 -- ── STEP 1: NORMALIZE EMAILS ──────────────────────────────
 -- Lowercase and trim all emails
 UPDATE contacts_clean SET Email = TRIM(LOWER(Email));
